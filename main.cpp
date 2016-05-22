@@ -5,18 +5,23 @@
 using namespace std;
 
 void round(int*, int, int, int&, int&);
-void round_s(int*, int*, int*, int&, int&, int&, int, int&, int&, int&, int&);
+void round_s1(int*, int*, int*, int&, int&, int&, int, int&, int&, int&, int&);
+void round_s2(int*, int*, int*, int&, int&, int&, int, int&, int&, int&, int&);
 
 void hit_p(int*, int*, int*, int&, int&, int&, int, int&, int&, int);
 void hit_d(int*, int*, int*, int&, int&,       int, int&, int&, int);
-void endAll(int, int, int&, int&, int);
+
+void endCheck_A(int, int, int&, int&, int);
 void endCheck(int&, int&, int, int win, float); // win= 0:閒家, 1:莊家, 2:平
 
-int checkPoint(int*, int);
 void deal(int*, int*, int&, int&);
-
 void reset(int*, int);
-void showCard(int*, int, bool); // bool= 1:顯示全部, 0:暗牌
+int checkPoint(int*);
+int checkPoint(int*, int);
+
+void showCard(int*, int, bool); // bool= 1:全部顯示, 0:暗牌
+void checkCin(int&, int, int); // 檢查, 下限(含), 上限(含)
+void checkCin(char&);
 
 int main()
 {
@@ -29,67 +34,77 @@ int main()
     int coin_d = Coin;   // 莊家
     int coin_p = Coin;   // 閒家
 
-    int cc = 0;
-    round(A, cc, card_gn, coin_d, coin_p);
+    int CardCount = 0;                            // 牌堆計數器
+    round(A, CardCount, card_gn, coin_d, coin_p); // 開始遊戲
 
     delete [] A;
     return 0;
 }
 
-void round(int* A, int cc, int card_n, int &coin_d, int &coin_p)
+void round(int* A, int cc, int card_n, int &coin_d, int &coin_p) // 牌堆, 牌堆計數器, 牌組數, 莊家籌碼, 閒家籌碼
 {
     if ( cc > card_n*52/2 || cc == 0 )
-       { reset(A, card_n);
-         cc = 0;
+       { cc = 0;  reset(A, card_n);
        }
 
     const int TheMaxCard = 12;
-    int* Ad=new int[TheMaxCard];
-    int* Ap=new int[TheMaxCard];
+    int* Ad=new int[TheMaxCard]; // 莊家手牌
+    int* Ap=new int[TheMaxCard]; // 閒家手牌
     for ( int i=0 ; i<TheMaxCard ; ++i )
-        { Ad[i] = 0;
-          Ap[i] = 0;
+        { Ad[i] = 0;  Ap[i] = 0;
         }
-    int cd = 0, cp = 0;
+    int cd = 0, cp = 0; // 手牌計數器
 
     int token = 1, token_d = 0;
 
-    cout << endl;
+    round_s1(A, Ad, Ap, cc, cd, cp, TheMaxCard, coin_d, coin_p, token_d, token);
 
-    round_s(A, Ad, Ap, cc, cd, cp, TheMaxCard, coin_d, coin_p, token_d, token);
-
-    round_s(A, Ad, Ap, cc, cd, cp, TheMaxCard, coin_d, coin_p, token_d, token);
+    round_s2(A, Ad, Ap, cc, cd, cp, TheMaxCard, coin_d, coin_p, token_d, token);
 
     hit_p(A, Ad, Ap, cc, cd, cp, TheMaxCard, coin_d, coin_p, token_d);
 
     delete [] Ad;
     delete [] Ap;
 
-    if ( coin_d<=0 || coin_p<=0 )
+    if ( coin_d*coin_p <= 0 )
        { cout << endl << "遊戲結束" << endl;
          return;
        }
 
     char Continue;
-    cout << "是否再來一局 (y/n)? ";
-    cin >> Continue;
-    for ( ; true ; )
-        { if   ( Continue=='y' || Continue=='n' )
-               { break;
-               }
-          else { cout << "請輸入 y 或 n: ";
-                 cin >> Continue;
-               }
-        }
+    cout << endl << "是否再來一局 (y/n)? ";
+    cin >> Continue;  checkCin(Continue);
     if ( Continue=='y' )
        { round(A, cc, card_n, coin_d, coin_p);
        }
     return;
 }
 
-void round_s(int* A, int* Ad, int* Ap, int &cc, int &cd, int &cp, int TheMaxCard, int &coin_d, int &coin_p, int &token_d, int &token)
+void round_s1(int* A, int* Ad, int* Ap, int &cc, int &cd, int &cp, int TheMaxCard, int &coin_d, int &coin_p, int &token_d, int &token)
 {
-    cout << "莊家的籌碼: " << coin_d << ", 您的籌碼: " << coin_p << endl;
+    cout << endl << "莊家的籌碼: " << coin_d << ", 您的籌碼: " << coin_p << endl;
+
+    const int max_token = coin_p;
+    const int min_token = 1;
+    cout << "請下第一注開局 (可下 " << min_token << " ~ " << max_token << "): ";
+    cin  >> token;  checkCin(token, min_token, max_token);
+    coin_p  -= token;
+    token_d += token;
+
+    cout << endl << "發牌..." << endl;
+    deal(A, Ap, cc, cp);
+    deal(A, Ad, cc, cd);
+
+    cout << "莊家的牌:";
+    showCard(Ad, TheMaxCard, 0);
+    cout << "手中的牌:";
+    showCard(Ap, TheMaxCard, 1);
+    return;
+}
+
+void round_s2(int* A, int* Ad, int* Ap, int &cc, int &cd, int &cp, int TheMaxCard, int &coin_d, int &coin_p, int &token_d, int &token)
+{
+    cout << endl << "莊家的籌碼: " << coin_d << ", 您的籌碼: " << coin_p << endl;
 
     const int max_token = coin_p;
     const int min_token = token;
@@ -98,29 +113,19 @@ void round_s(int* A, int* Ad, int* Ap, int &cc, int &cd, int &cp, int TheMaxCard
            token = max_token;
          }
     else { cout << "請下注 (可下 " << min_token << " ~ " << max_token << "): ";
-           cin  >> token;
-           for ( ; true ; )
-               { if   ( token>=min_token && token<=max_token )
-                      { break;
-                      }
-                 else { cout << "下注範圍 (可下 " << min_token << " ~ " << max_token << "): ";
-                        cin >> token;
-                      }
-               }
+           cin  >> token;  checkCin(token, min_token, max_token);
          }
-    coin_p  = coin_p  - token;
-    token_d = token_d + token;
+    coin_p  -= token;
+    token_d += token;
 
     cout << endl << "發牌..." << endl;
     deal(A, Ap, cc, cp);
     deal(A, Ad, cc, cd);
 
-    cout << "莊家的牌: ";
+    cout << "莊家的牌:";
     showCard(Ad, TheMaxCard, 0);
-    cout << "手中的牌: ";
+    cout << "手中的牌:";
     showCard(Ap, TheMaxCard, 1);
-
-    cout << endl;
     return;
 }
 
@@ -132,8 +137,7 @@ void hit_p(int* A, int* Ad, int* Ap, int &cc, int &cd, int &cp, int TheMaxCard, 
           cin >> hit;
           if      ( hit=='h' )
                   { deal(A, Ap, cc, cp);
-                    cout << "手中的牌: ";
-                    showCard(Ap, TheMaxCard, 1);
+                    cout << "手中的牌: ";  showCard(Ap, TheMaxCard, 1);
                     const int point = checkPoint(Ap, 0);
                     if ( point > 21 )
                        { cout << "爆煲! " << point << " 點" << endl;
@@ -154,32 +158,30 @@ void hit_p(int* A, int* Ad, int* Ap, int &cc, int &cd, int &cp, int TheMaxCard, 
 void hit_d(int* A, int* Ad, int* Ap, int &cc, int &cd, int TheMaxCard, int &coin_d, int &coin_p, int token_d)
 {
     for ( ; true ; )
-        { const int point = checkPoint(Ad, 0);
-          if      ( point<17 )
+        { const int point = checkPoint(Ad);
+          if      ( point < 17 )
                   { deal(A, Ad, cc, cd);
-                    cout << "莊家要牌: ";
-                    showCard(Ad, TheMaxCard, 1);
+                    cout << "莊家要牌: ";  showCard(Ad, TheMaxCard, 0);
                   }
-          else if ( point>21 )
+          else if ( point > 21 )
                   { cout << "莊家爆煲! " << point << " 點" << endl;
-                    endCheck(coin_d, coin_p, token_d, 0, 1.5);
+                    showCard(Ad, TheMaxCard, 1);
+                    endCheck(coin_d, coin_p, token_d, 0, 1);
                     return;
                   }
           else    { cout << endl << "雙方皆未爆煲, 開牌:" << endl;
-                    const int point_d = checkPoint(Ad, 0);
-                    const int point_p = checkPoint(Ap, 0);
-                    cout << "莊家的牌: ";
-                    showCard(Ad, TheMaxCard, 1);
-                    cout << "手中的牌: ";
-                    showCard(Ap, TheMaxCard, 1);
+                    const int point_d = checkPoint(Ad);
+                    const int point_p = checkPoint(Ap);
+                    cout << "莊家的牌: ";  showCard(Ad, TheMaxCard, 1);
+                    cout << "手中的牌: ";  showCard(Ap, TheMaxCard, 1);
                     cout << "莊家點數 " << point_d << ", 您的點數 " << point_p << endl;
-                    endAll(point_d, point_p, coin_d, coin_p, token_d);
+                    endCheck_A(point_d, point_p, coin_d, coin_p, token_d);
                     return;
                   }
         }
 }
 
-void endAll(int pd, int pp, int &cd, int &cp, int t)
+void endCheck_A(int pd, int pp, int &cd, int &cp, int t)
 {
     if      ( pd > pp )
             { endCheck(cd, cp, t, 1, 0);
@@ -195,42 +197,28 @@ void endAll(int pd, int pp, int &cd, int &cp, int t)
 void endCheck(int &coin_d, int &coin_p, int token_d, int win, float odds)
 {
     if      ( win==0 )
-            { cout << "本局閒家獲勝!" << endl << endl;
+            { cout << endl << "本局閒家獲勝!" << endl;
               const int pay = token_d*odds;
-              coin_d = coin_d - pay;
-              coin_p = coin_p + token_d;
-              coin_p = coin_p + pay;
+              coin_d -= pay;
+              coin_p += token_d;
+              coin_p += pay;
             }
     else if ( win==1 )
-            { cout << "本局莊家獲勝!" << endl << endl;
-			  coin_d = coin_d + token_d;
+            { cout << endl << "本局莊家獲勝!" << endl;
+			  coin_d += token_d;
             }
-    else    { cout << "本局平手!" << endl << endl;
-              coin_p = coin_p + token_d;
+    else    { cout << endl << "本局平手!" << endl;
+              coin_p += token_d;
             }
-
-    if   ( coin_d<=0 )
-         { cout << "莊家已失去所有籌碼, 您贏了!" << endl;
-         }
-    else { if   ( coin_p<=0 )
-                { cout << "您已失去所有籌碼, 您輸了!" << endl;
-                }
-           else { cout << "莊家的籌碼: " << coin_d << ", 您的籌碼: " << coin_p << endl << endl;
-                }
-         }
+    if      ( coin_d <= 0 )
+            { cout << endl << "莊家已失去所有籌碼, 您贏了!" << endl;
+            }
+    else if ( coin_p <=0 )
+            { cout << endl << "您已失去所有籌碼, 您輸了!" << endl;
+            }
+    else    { cout << "莊家的籌碼: " << coin_d << ", 您的籌碼: " << coin_p << endl;
+            }
     return;
-}
-
-int checkPoint(int* A, int n)
-{
-    if ( A[n]==0 )
-       { return 0;
-       }
-    if   ( A[n]>=1 && A[n]<=10 )
-         { return A[n] + checkPoint(A, n+1);
-         }
-    else { return  10  + checkPoint(A, n+1);
-         }
 }
 
 void deal(int* A, int* Ax, int &cc, int &cx)
@@ -253,8 +241,9 @@ void reset(int* A, int n)
               }
         }
     const int nc = n*52;
+    const int nn = nc*nc;
     srand( (unsigned)time(NULL) );
-    for ( int i=1 ; i<=nc*nc ; ++i )
+    for ( int i=1 ; i<=nn ; ++i )
         { int x = rand()%nc;
           int y = rand()%nc;
           int t=A[x];
@@ -264,18 +253,90 @@ void reset(int* A, int n)
     return;
 }
 
+int checkPoint(int* A)
+{
+    int sum = 0, doubleA = 0;
+    for ( int i=0 ; true ; ++i )
+        { if ( A[i]==0 )
+             { break;
+             }
+          if      ( A[i]==1 )
+                  { sum += 11;
+                    ++doubleA;
+                  }
+          else if ( A[i]>=2 && A[i]<=9 )
+                  { sum += A[i];
+                  }
+          else    { sum += 10;
+                  }
+        }
+
+    if ( doubleA > 1)
+       { sum -= 10*(doubleA-1);
+       }
+
+    if   ( sum > 21 )
+         { const int point = checkPoint(A, 0);
+           return point;
+         }
+    else { return sum;
+         }
+}
+
+int checkPoint(int* A, int n)
+{
+    if ( A[n]==0 )
+       { return 0;
+       }
+    if   ( A[n]>=1 && A[n]<=10 )
+         { return A[n] + checkPoint(A, n+1);
+         }
+    else { return  10  + checkPoint(A, n+1);
+         }
+}
+
 void showCard(int* A, int n, bool Switch)
 {
     if   ( Switch )
          { for ( int i=0 ; i<n ; ++i )
-               { cout << setw(3) << A[i];
+               { if ( A[i]==0 )
+                    { break;
+                    }
+                 cout << setw(3) << A[i];
                }
          }
     else { cout << "  *";
            for ( int i=1 ; i<n ; ++i )
-               { cout << setw(3) << A[i];
+               { if ( A[i]==0 )
+                    { break;
+                    }
+                 cout << setw(3) << A[i];
                }
          }
     cout << endl;
     return;
+}
+
+void checkCin(int &x, int a, int b)
+{
+    for ( ; true ; )
+        { if   ( x>=a && x<=b )
+               { return;
+               }
+          else { cout << "提醒, 下注範圍 " << a << " ~ " << b << ": ";
+                 cin >> x;
+               }
+        }
+}
+
+void checkCin(char &x)
+{
+    for ( ; true ; )
+        { if   ( x=='y' || x=='n' )
+               { return;
+               }
+          else { cout << "請輸入 y 或 n: ";
+                 cin >> x;
+               }
+        }
 }
