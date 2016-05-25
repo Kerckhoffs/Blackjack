@@ -1,0 +1,35 @@
+# depslib dependency file v1.0
+1464198472 source:q:\data\documents\sourcetree\zz_blackjack\main.cpp
+	<iostream>
+	<iomanip>
+	<cstdlib>
+	<ctime>
+	<cstring>
+	"Basic.h"
+	"Card.h"
+	"CardStack.h"
+	"Poker.h"
+	"PokerGrp.h"
+	"Coin.h"
+	"Desktop.h"
+	"Player.h"
+
+1464095565 q:\data\documents\sourcetree\zz_blackjack\suit.h
+
+1464192557 q:\data\documents\sourcetree\zz_blackjack\card.h
+	"Suit.h"
+
+1464190389 q:\data\documents\sourcetree\zz_blackjack\poker.h
+
+1464190542 q:\data\documents\sourcetree\zz_blackjack\pokergrp.h
+
+1464104418 q:\data\documents\sourcetree\zz_blackjack\coin.h
+
+1464192648 q:\data\documents\sourcetree\zz_blackjack\player.h
+
+1464191109 q:\data\documents\sourcetree\zz_blackjack\cardstack.h
+
+1464107302 q:\data\documents\sourcetree\zz_blackjack\desktop.h
+
+1464180793 q:\data\documents\sourcetree\zz_blackjack\basic.h
+
