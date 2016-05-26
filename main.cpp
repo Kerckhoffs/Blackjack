@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
+#include <limits>
 using namespace std;
 
 #include "Basic.h"
@@ -245,6 +246,7 @@ void check(int &x, int Min, int Max)
        }
 
     cout << "range error, try again: ";
+    cin.clear();  cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin >> x;
 
     return check(x, Min, Max);
