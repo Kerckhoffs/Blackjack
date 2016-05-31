@@ -32,7 +32,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="Basic.h" />
 		<Unit filename="Card.h" />
 		<Unit filename="CardStack.h" />
 		<Unit filename="Coin.h" />
@@ -40,6 +39,7 @@
 		<Unit filename="Player.h" />
 		<Unit filename="Poker.h" />
 		<Unit filename="PokerGrp.h" />
+		<Unit filename="Stack.h" />
 		<Unit filename="Suit.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
