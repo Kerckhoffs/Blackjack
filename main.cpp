@@ -122,8 +122,8 @@ void round(PokerGrp &card, Player &dealer, Player &player)
     else if ( hd==bust )
             { winPlayer(desk, player, dealer);
             }
-    else    { cout << "莊家的牌: ";  dealer.display(true);
-              cout << "手中的牌: ";  player.display(true);
+    else    { cout << "莊家的牌(" << dealer.getPoint() << "點): ";  dealer.display(true);
+              cout << "手中的牌(" << player.getPoint() << "點): ";  player.display(true);
               cout << endl;
               if      ( player.getPoint()<dealer.getPoint() )
                       { winDealer(desk, dealer, player);
