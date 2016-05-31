@@ -241,7 +241,7 @@ void winDraw(Desktop &desk, Player &dealer, Player &player)
 
 void check(int &x, int Min, int Max)
 {
-    if ( x>=Min && x<=Max )
+    if ( x>=Min && x<=Max && !(cin.fail()) )
        { return;
        }
 
@@ -254,11 +254,12 @@ void check(int &x, int Min, int Max)
 
 void check(char &x, char a, char b)
 {
-    if ( x==a || x==b )
+    if ( (x==a || x==b) && !(cin.fail()) )
        { return;
        }
 
     cout << "answer error, try again: ";
+    cin.clear();  cin.ignore(numeric_limits<streamsize>::max(), '\n');
     cin >> x;
 
     return check(x, a, b);
