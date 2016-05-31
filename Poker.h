@@ -11,9 +11,9 @@ public:
     Poker();
 
     static const int getNum();
-    Card& getCard(int Number);
+    const Card& getCard(int Number);
 
-    Card& payCard();
+    const Card& payCard();
 
     void checkEnough();
 
@@ -37,7 +37,7 @@ const int Poker::getNum() {
     return num;
 }
 
-Card& Poker::getCard(int Number) {
+const Card& Poker::getCard(int Number) {
     if ( Number<1 )
        { cout << "error: at.Poker" << endl;
          return ary[top];
@@ -49,7 +49,7 @@ Card& Poker::getCard(int Number) {
     return ary[top+Number-1];
 }
 
-Card& Poker::payCard() {
+const Card& Poker::payCard() {
     ++top;
     return ary[top-1];
 }

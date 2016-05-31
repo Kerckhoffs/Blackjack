@@ -13,7 +13,7 @@ public:
     Card(int Number, char Suit);
     Card(int Number, int Suit);
 
-    Card& operator=(Card &x);
+    Card& operator=(const Card &x);
 
     int getNum();
     void setCard(int Number, char Suit);
@@ -34,7 +34,7 @@ Card::Card(int Number, int Suit) {
     setCard(Number, Suit);
 }
 
-Card& Card::operator=(Card &x) {
+Card& Card::operator=(const Card &x) {
     num = x.num;
     sui = x.sui;
     return *this;

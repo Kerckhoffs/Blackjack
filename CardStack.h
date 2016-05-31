@@ -10,7 +10,7 @@ private:
 public:
     CardStack();
 
-    void place(Card &x);
+    void place(const Card &x);
     void out();
     void outAll();
 
@@ -29,7 +29,7 @@ CardStack::CardStack() {
     top = -1;
 }
 
-void CardStack::place(Card &x) {
+void CardStack::place(const Card &x) {
     if ( top==tot-1 )
        { inOverflow();
        }

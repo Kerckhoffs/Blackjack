@@ -12,7 +12,7 @@ private:
 public:
     Suit();
 
-    Suit& operator=(Suit &x);
+    Suit& operator=(const Suit &x);
 
     void setSuit(char Suit);
     void setSuit(int Suit);
@@ -24,7 +24,7 @@ Suit::Suit() {
     suit = '0';
 }
 
-Suit& Suit::operator=(Suit &x) {
+Suit& Suit::operator=(const Suit &x) {
     suit = x.suit;
     return *this;
 }

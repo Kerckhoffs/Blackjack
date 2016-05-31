@@ -11,9 +11,9 @@ public:
     PokerGrp();
     PokerGrp(int Number);
 
-    Card& getCard(int Number);
+    const Card& getCard(int Number);
 
-    Card& payCard();
+    const Card& payCard();
 
     void checkEnough();
 
@@ -48,7 +48,7 @@ PokerGrp::PokerGrp(int Number) {
     top = 0;
 }
 
-Card& PokerGrp::getCard(int Number) {
+const Card& PokerGrp::getCard(int Number) {
     if ( Number<1 )
        { cout << "error: at.PokerGrp" << endl;
          return ary[top];
@@ -60,7 +60,7 @@ Card& PokerGrp::getCard(int Number) {
     return ary[top+Number-1];
 }
 
-Card& PokerGrp::payCard() {
+const Card& PokerGrp::payCard() {
     ++top;
     return ary[top-1];
 }

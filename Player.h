@@ -97,8 +97,7 @@ void Player::payCoinTo(Desktop &x, int Cash) {
 }
 
 void Player::recCoinFm(Desktop &x) {
-    Coin ans = x.payCoin();
-    recCoin(ans);
+    recCoin( x.payCoin() );
 }
 
 void Player::recCardFm(Poker &x) {

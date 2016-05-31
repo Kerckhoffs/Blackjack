@@ -13,9 +13,9 @@ public:
     void setZero();
 
     Coin& operator=(int x);
-    Coin& operator=(Coin &x);
-    Coin& operator+(Coin &x);
-    Coin& operator-(Coin &x);
+    Coin& operator=(const Coin &x);
+    Coin& operator+(const Coin &x);
+    Coin& operator-(const Coin &x);
 
     Coin& operator+=(int x);
     Coin& operator-=(int x);
@@ -40,18 +40,18 @@ Coin& Coin::operator=(int x) {
     return *this;
 }
 
-Coin& Coin::operator=(Coin &x) {
+Coin& Coin::operator=(const Coin &x) {
     coin = x.coin;
     return *this;
 }
 
-Coin& Coin::operator+(Coin &x) {
+Coin& Coin::operator+(const Coin &x) {
     static Coin ans;
     ans.coin = coin + x.coin;
     return ans;
 }
 
-Coin& Coin::operator-(Coin &x) {
+Coin& Coin::operator-(const Coin &x) {
     static Coin ans;
     ans.coin = coin - x.coin;
     return ans;
@@ -80,26 +80,12 @@ Coin& Coin::operator-=(int x) {
 }
 
 Coin& Coin::operator+=(Coin &x) {
-    int xcoin = x.getCoin();
-    if ( xcoin<0 )
-       { cout << "error: at.Coin" << endl;
-         return *this;
-       }
-    coin += xcoin;
+    *this += x.getCoin();
     return *this;
 }
 
 Coin& Coin::operator-=(Coin &x) {
-    int xcoin = x.getCoin();
-    if ( xcoin<0 )
-       { cout << "error: at.Coin" << endl;
-         return *this;
-       }
-    if ( xcoin>coin )
-       { cout << "error: at.Coin" << endl;
-         return *this;
-       }
-    coin -= xcoin;
+    *this -= x.getCoin();
     return *this;
 }
 
