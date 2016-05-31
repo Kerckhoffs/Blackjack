@@ -17,9 +17,11 @@ public:
 
     void checkEnough();
 
-    void shuffle();
     void shuffle(int Time);
     void display();
+
+private:
+    void shuffle();
 };
 
 Poker::Poker() {
@@ -54,8 +56,26 @@ Card& Poker::payCard() {
 
 void Poker::checkEnough() {
     if ( top*2 >= num )
-       { shuffle();
+       { shuffle(1);
        }
+}
+
+void Poker::shuffle(int Time) {
+    if ( Time<1 )
+       { cout << "error: at.Poker" << endl;
+         return;
+       }
+    cout << "[洗牌]" << endl << endl;
+    for ( int i=1 ; i<=Time ; ++i )
+        { shuffle();
+        }
+}
+
+void Poker::display() {
+    for ( int i=top ; i<num ; ++i )
+        { ary[i].display();
+          cout << endl;
+        }
 }
 
 void Poker::shuffle() {
@@ -68,23 +88,6 @@ void Poker::shuffle() {
           ary[y] = temppp;
         }
     top = 0;
-}
-
-void Poker::shuffle(int Time) {
-    if ( Time<1 )
-       { cout << "error: at.Poker" << endl;
-         return;
-       }
-    for ( int i=1 ; i<=Time ; ++i )
-        { shuffle();
-        }
-}
-
-void Poker::display() {
-    for ( int i=top ; i<num ; ++i )
-        { ary[i].display();
-          cout << endl;
-        }
 }
 
 #endif // POKER_H_INCLUDED

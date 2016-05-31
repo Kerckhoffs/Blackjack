@@ -37,7 +37,7 @@ int main()
     srand( (unsigned)time(NULL) );
 
 
-    PokerGrp card(1);
+    PokerGrp card(2);
     card.shuffle(3);
 
     char name[7] = "Player";

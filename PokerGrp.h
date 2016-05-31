@@ -17,11 +17,13 @@ public:
 
     void checkEnough();
 
-    void shuffle();
     void shuffle(int Time);
     void display();
 
     ~PokerGrp();
+
+private:
+    void shuffle();
 };
 
 PokerGrp::PokerGrp() {
@@ -65,22 +67,8 @@ Card& PokerGrp::payCard() {
 
 void PokerGrp::checkEnough() {
     if ( top*2 >= num*Poker::getNum() )
-       { shuffle();
+       { shuffle(1);
        }
-}
-
-void PokerGrp::shuffle() {
-    const int t = 1000*num;
-    const int r = num*Poker::getNum();
-    for ( int i=1 ; i<=t ; ++i )
-        { int x = rand()%r;
-          int y = rand()%r;
-          Card temppp;
-          temppp = ary[x];
-          ary[x] = ary[y];
-          ary[y] = temppp;
-        }
-    top = 0;
 }
 
 void PokerGrp::shuffle(int Time) {
@@ -88,6 +76,7 @@ void PokerGrp::shuffle(int Time) {
        { cout << "error: at.PokerGrp" << endl;
          return;
        }
+    cout << "[洗牌]" << endl << endl;
     for ( int i=1 ; i<=Time ; ++i )
         { shuffle();
         }
@@ -103,6 +92,20 @@ void PokerGrp::display() {
 
 PokerGrp::~PokerGrp() {
     delete [] ary;
+}
+
+void PokerGrp::shuffle() {
+    const int t = 1000*num;
+    const int r = num*Poker::getNum();
+    for ( int i=1 ; i<=t ; ++i )
+        { int x = rand()%r;
+          int y = rand()%r;
+          Card temppp;
+          temppp = ary[x];
+          ary[x] = ary[y];
+          ary[y] = temppp;
+        }
+    top = 0;
 }
 
 #endif // POKERGRP_H_INCLUDED
