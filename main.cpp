@@ -6,6 +6,8 @@
 #include <limits>
 using namespace std;
 
+bool f_hit_re_chk = true;  // 要牌確認功能
+
 #include "Stack.h"
 
 #include "Card.h"
@@ -29,6 +31,7 @@ void winPlayer(Desktop&, Player& winer, Player& loser); // winner: Player
 void winDealer(Desktop&, Player& winer, Player& loser); // winner: Dealer
 void winDraw  (Desktop&, Player& dealer, Player& player);
 
+void check(char&, char, char, bool);
 void check(int&, int, int);
 void check(char&, char, char);
 
@@ -159,7 +162,7 @@ bool roundHitP(PokerGrp &card, Player &player)
 {
     char choice;
     cout << "要牌 Hit/停牌 Stand (h/s)? ";
-    cin >> choice;  check(choice, 'h', 's');  cout << endl;
+    cin >> choice;  check(choice, 'h', 's', f_hit_re_chk);  cout << endl;
 
 
     if ( choice=='s' )
@@ -236,6 +239,25 @@ void winDraw(Desktop &desk, Player &dealer, Player &player)
          << "莊家的籌碼: " << dealer.getCoin()
          << ", 您的籌碼: " << player.getCoin()
          << endl << endl;
+    return;
+}
+
+void check(char &x, char a, char b, bool r)
+{
+    check(x, a, b);
+
+    if ( r )
+       { char choice;
+         cout << "選擇 " << x << ", 確定 (y/n)? ";
+         cin >> choice;  check(choice, 'y', 'n');
+
+         if ( choice=='y' )
+            { return;
+            }
+         cout << "要牌 Hit/停牌 Stand (h/s)? ";
+         cin >> x;  check(x, 'h', 's', r);
+         return;
+       }
     return;
 }
 
