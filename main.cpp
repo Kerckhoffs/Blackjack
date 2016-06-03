@@ -6,7 +6,11 @@
 #include <limits>
 using namespace std;
 
-bool f_hit_re_chk = true;  // 要牌確認功能
+bool f_hit_re_chk = false;  // 要牌確認功能
+
+bool err_rcu = false;  // 遞迴錯誤檢測機制
+const int err_rcu_num = 100000;
+string err_rcu_exp = "warning, recursion overflow! 系統將自動關閉!";
 
 #include "Stack.h"
 
@@ -66,6 +70,7 @@ void round(PokerGrp &card, Player &dealer, Player &player)
     int minToken = 1;
     cout << "請下第一注 (range " << minToken << " ~ " << maxToken << "): ";
     cin >> token;  check(token, minToken, maxToken);  cout << endl;
+    if ( err_rcu )  return;
 
     player.payCoinTo(desk, token);
 
@@ -93,6 +98,7 @@ void round(PokerGrp &card, Player &dealer, Player &player)
          }
     else { cout << "請下注 (range " << minToken << " ~ " << maxToken << "): ";
            cin >> token;  check(token, minToken, maxToken);  cout << endl;
+           if ( err_rcu )  return;
 
            player.payCoinTo(desk, token);
          }
@@ -110,6 +116,7 @@ void round(PokerGrp &card, Player &dealer, Player &player)
     // Round Hit
     bool hp, hd;
     hp = roundHitP(card, player);
+    if ( err_rcu )  return;
 
     if ( hp!=bust )
        { cout << "[莊家要牌]" << endl
@@ -152,9 +159,8 @@ void round(PokerGrp &card, Player &dealer, Player &player)
     char choice;
     cout << "是否再來一局 (y/n)? ";
     cin >> choice;  check(choice, 'y', 'n');  cout << endl;
-    if ( choice=='n' )
-       { return;
-       }
+    if ( err_rcu     )  return;
+    if ( choice=='n' )  return;
     return round(card, dealer, player);
 }
 
@@ -163,6 +169,7 @@ bool roundHitP(PokerGrp &card, Player &player)
     char choice;
     cout << "要牌 Hit/停牌 Stand (h/s)? ";
     cin >> choice;  check(choice, 'h', 's', f_hit_re_chk);  cout << endl;
+    if ( err_rcu )  return bool();
 
 
     if ( choice=='s' )
@@ -244,6 +251,8 @@ void winDraw(Desktop &desk, Player &dealer, Player &player)
 
 void check(char &x, char a, char b, bool r)
 {
+    static int max = 0;  ++max;
+
     check(x, a, b);
 
     if ( r )
@@ -254,6 +263,11 @@ void check(char &x, char a, char b, bool r)
          if ( choice=='y' )
             { return;
             }
+         if ( max==err_rcu_num )
+            { cout << err_rcu_exp << endl;
+              err_rcu = true;
+              return;
+            }
          cout << "要牌 Hit/停牌 Stand (h/s)? ";
          cin >> x;  check(x, 'h', 's', r);
          return;
@@ -263,8 +277,15 @@ void check(char &x, char a, char b, bool r)
 
 void check(int &x, int Min, int Max)
 {
+    static int max = 0;  ++max;
+
     if ( x>=Min && x<=Max && !(cin.fail()) )
        { return;
+       }
+    if ( max==err_rcu_num )
+       { cout << err_rcu_exp << endl;
+         err_rcu = true;
+         return;
        }
 
     cout << "range error, try again: ";
@@ -276,8 +297,15 @@ void check(int &x, int Min, int Max)
 
 void check(char &x, char a, char b)
 {
+    static int max = 0;  ++max;
+
     if ( (x==a || x==b) && !(cin.fail()) )
        { return;
+       }
+    if ( max==err_rcu_num )
+       { cout << err_rcu_exp << endl;
+         err_rcu = true;
+         return;
        }
 
     cout << "answer error, try again: ";
